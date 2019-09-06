@@ -1,0 +1,49 @@
+version: "3.7"
+services:
+  myapp-frontend:
+    build:
+      context: ./frontend
+    image: devanshagrawal/myapp-frontend:2.0
+    environment:
+      BACKENDLB: myapp-backend
+    ports:
+      - "9000:80"
+    volumes:
+      - type: volume
+        source: myapp-frontend-logval
+        target: /var/log
+  myapp-frontend-logs:
+    build:
+      context: ./awslogs
+    image: devanshagrawal/myapp-frontend-logs:2.0
+    depends_on:
+      - myapp-frontend
+    volumes:
+      - type: volume
+        source: myapp-frontend-logval
+        target: /mnt/log
+        read_only: true
+  myapp-backend:
+    build:
+      context: ./backend
+    image: devanshagrawal/myapp-backend:2.0
+    depends_on:
+      - myapp-frontend
+    volumes:
+      - type: volume
+        source: myapp-backend-logval
+        target: /var/log
+  myapp-backend-logs:
+    build:
+      context: ./awslogs
+    image: devanshagrawal/myapp-backend-logs:2.0
+    depends_on:
+      - myapp-backend
+    volumes:
+      - type: volume
+        source: myapp-backend-logval
+        target: /mnt/log
+        read_only: true
+volumes: 
+  myapp-frontend-logval:
+  myapp-backend-logval:
