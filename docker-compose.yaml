@@ -12,17 +12,6 @@ services:
       - type: volume
         source: myapp-frontend-logval
         target: /var/log
-  myapp-frontend-logs:
-    build:
-      context: ./awslogs
-    image: devanshagrawal/myapp-frontend-logs:2.0
-    depends_on:
-      - myapp-frontend
-    volumes:
-      - type: volume
-        source: myapp-frontend-logval
-        target: /mnt/log
-        read_only: true
   myapp-backend:
     build:
       context: ./backend
@@ -33,17 +22,14 @@ services:
       - type: volume
         source: myapp-backend-logval
         target: /var/log
-  myapp-backend-logs:
-    build:
-      context: ./awslogs
-    image: devanshagrawal/myapp-backend-logs:2.0
-    depends_on:
-      - myapp-backend
+  myapp-db:
+    image: mysql:5.7
     volumes:
       - type: volume
-        source: myapp-backend-logval
-        target: /mnt/log
+        source: myapp-db-vol
+        target: /var/log/mysql
         read_only: true
 volumes: 
   myapp-frontend-logval:
   myapp-backend-logval:
+  myapp-db-vol:
